@@ -1,11 +1,12 @@
-# This is fork of@capgo/capacitor-fast-sql
+# This is fork of @capgo/capacitor-fast-sql
 
 Right now this fork focuses on improving web implementation.
+
+All credits should go to original maintainer at https://github.com/Cap-go/capacitor-fast-sql
 
 # @caspinos/capacitor-fast-sql
 
 High-performance native SQLite plugin with HTTP server for efficient sync operations and IndexedDB replacement.
-Official Capgo alternative to Ionic Appflow Secure Storage.
 
 ## Why Fast SQL?
 
