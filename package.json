@@ -1,5 +1,5 @@
 {
-  "name": "@capgo/capacitor-fast-sql",
+  "name": "@caspinos/capacitor-fast-sql",
   "version": "8.0.24",
   "description": "High-performance native SQLite plugin with custom protocol for efficient sync operations and IndexedDB replacement",
   "main": "dist/plugin.cjs.js",
@@ -15,16 +15,19 @@
     "Package.swift",
     "CapgoCapacitorFastSql.podspec"
   ],
-  "author": "Martin Donadieu <martin@capgo.app>",
+  "author": "caspinos",
+  "contributors": [
+    "Martin Donadieu <martin@capgo.app> (https://github.com/Cap-go)"
+  ],
   "license": "MPL-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Cap-go/capacitor-fast-sql.git"
+    "url": "git+https://github.com/caspinos/capacitor-fast-sql.git"
   },
   "bugs": {
-    "url": "https://github.com/Cap-go/capacitor-fast-sql/issues"
+    "url": "https://github.com/caspinos/capacitor-fast-sql/issues"
   },
-  "homepage": "https://capgo.app/docs/plugins/fast-sql/",
+  "homepage": "https://github.com/caspinos/capacitor-fast-sql#readme",
   "keywords": [
     "capacitor",
     "plugin",
@@ -37,20 +40,20 @@
     "performance"
   ],
   "scripts": {
-    "verify": "npm run verify:ios && npm run verify:android && npm run verify:web",
+    "verify": "bun run verify:ios && bun run verify:android && bun run verify:web",
     "verify:ios": "xcodebuild -scheme CapgoCapacitorFastSql -destination generic/platform=iOS",
     "verify:android": "cd android && ./gradlew clean build test && cd ..",
-    "verify:web": "npm run build",
-    "lint": "npm run eslint && npm run prettier -- --check && npm run swiftlint -- lint",
-    "fmt": "npm run eslint -- --fix && npm run prettier -- --write && npm run swiftlint -- --fix --format",
+    "verify:web": "bun run build",
+    "lint": "bun run eslint && bun run prettier -- --check && bun run swiftlint -- lint",
+    "fmt": "bun run eslint -- --fix && bun run prettier -- --write && bun run swiftlint -- --fix --format",
     "eslint": "eslint .",
     "prettier": "prettier-pretty-check \"**/*.{css,html,ts,js,java}\" --plugin=prettier-plugin-java",
     "swiftlint": "node-swiftlint",
     "docgen": "docgen --api CapgoCapacitorFastSqlPlugin --output-readme README.md --output-json dist/docs.json",
-    "build": "npm run clean && tsc && rollup -c rollup.config.mjs",
+    "build": "bun run clean && tsc && rollup -c rollup.config.mjs",
     "clean": "rimraf ./dist",
     "watch": "tsc --watch",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "bun run build",
     "check:wiring": "node scripts/check-capacitor-plugin-wiring.mjs"
   },
   "devDependencies": {
