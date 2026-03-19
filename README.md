@@ -1,10 +1,8 @@
-# @capgo/capacitor-fast-sql
-  <a href="https://capgo.app/"><img src='https://raw.githubusercontent.com/Cap-go/capgo/main/assets/capgo_banner.png' alt='Capgo - Instant updates for capacitor'/></a>
+# This is fork of@capgo/capacitor-fast-sql
 
-<div align="center">
-  <h2><a href="https://capgo.app/?ref=plugin_fast_sql"> ➡️ Get Instant updates for your App with Capgo</a></h2>
-  <h2><a href="https://capgo.app/consulting/?ref=plugin_fast_sql"> Missing a feature? We'll build the plugin for you 💪</a></h2>
-</div>
+Right now this fork focuses on improving web implementation.
+
+# @caspinos/capacitor-fast-sql
 
 High-performance native SQLite plugin with HTTP server for efficient sync operations and IndexedDB replacement.
 Official Capgo alternative to Ionic Appflow Secure Storage.
