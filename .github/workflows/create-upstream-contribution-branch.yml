@@ -1,0 +1,59 @@
+name: Create upstream-contribution branch
+
+on:
+  push:
+    branches:
+      - copilot/upstream-contribution
+
+jobs:
+  create-branch:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    name: "Create upstream-contribution branch from improvements"
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
+      - name: Add upstream remote and fetch
+        run: |
+          git remote add upstream https://github.com/Cap-go/capacitor-fast-sql.git
+          git fetch upstream main:upstream-main
+
+      - name: Create upstream-contribution branch
+        run: |
+          git checkout -b upstream-contribution upstream-main
+
+      - name: Apply improvements (excluding README.md and package.json)
+        run: |
+          git diff upstream-main origin/main -- . \
+            ':(exclude)README.md' \
+            ':(exclude)package.json' \
+            | git apply --index
+
+      - name: Commit improvements
+        run: |
+          git commit -m "feat: add configureWeb(), SQLConnection interface, and WebSQLConnection for web platform
+
+          - Add configureWeb() to allow bundling sql.js WASM locally (iOS, Android, web)
+          - Extract SQLConnection interface (src/sql-connection.ts)
+          - Add WebSQLConnection for web platform (src/web-sql-connection.ts)
+          - Move NativeSQLConnection to separate file (src/native-sql-connection.ts)
+          - Use native-platform check in FastSQL to dispatch between implementations
+          - Fix: add no-op configureWeb to Android and iOS native plugins
+          - Fix: replace @link tag with plain text in WebConfig JSDoc
+          - Update android/build.gradle sqlcipher version
+          - Sync bun.lock files"
+
+      - name: Push upstream-contribution branch
+        run: |
+          git push origin upstream-contribution --force
