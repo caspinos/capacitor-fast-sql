@@ -22,7 +22,8 @@ public class CapgoCapacitorFastSqlPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "commitTransaction", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "rollbackTransaction", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getPluginVersion", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "configureWeb", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "configureWeb", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "deleteDatabase", returnType: CAPPluginReturnPromise)
     ]
 
     private var databases: [String: SQLDatabase] = [:]
@@ -219,6 +220,36 @@ public class CapgoCapacitorFastSqlPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func configureWeb(_ call: CAPPluginCall) {
         // No-op on iOS — web configuration is only relevant on the web platform.
         call.resolve()
+    }
+
+    @objc func deleteDatabase(_ call: CAPPluginCall) {
+        guard let database = call.getString("database") else {
+            call.reject("Database name is required")
+            return
+        }
+
+        // Close and disconnect if currently open
+        if let db = databases[database] {
+            db.close()
+            databases.removeValue(forKey: database)
+
+            // Stop server if no more databases
+            if databases.isEmpty {
+                server?.stop()
+                server = nil
+            }
+        }
+
+        do {
+            let dbPath = try getDatabasePath(database)
+            let fileManager = FileManager.default
+            if fileManager.fileExists(atPath: dbPath) {
+                try fileManager.removeItem(atPath: dbPath)
+            }
+            call.resolve()
+        } catch {
+            call.reject("Failed to delete database \"\(database)\": \(error.localizedDescription)")
+        }
     }
 
     private func getDatabasePath(_ database: String) throws -> String {

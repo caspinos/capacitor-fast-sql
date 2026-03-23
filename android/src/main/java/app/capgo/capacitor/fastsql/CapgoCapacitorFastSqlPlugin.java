@@ -242,6 +242,36 @@ public class CapgoCapacitorFastSqlPlugin extends Plugin {
     }
 
     @PluginMethod
+    public void deleteDatabase(PluginCall call) {
+        String database = call.getString("database");
+        if (database == null) {
+            call.reject("Database name is required");
+            return;
+        }
+
+        // Close and disconnect if currently open
+        DatabaseConnection db = databases.get(database);
+        if (db != null) {
+            db.close();
+            databases.remove(database);
+
+            // Stop server if no more databases
+            if (databases.isEmpty() && server != null) {
+                server.stop();
+                server = null;
+            }
+        }
+
+        File dbFile = getDatabasePath(database);
+        if (dbFile.exists() && !dbFile.delete()) {
+            call.reject("Failed to delete database file for '" + database + "'. The file may be locked or there are insufficient permissions.");
+            return;
+        }
+
+        call.resolve();
+    }
+
+    @PluginMethod
     public void getPluginVersion(PluginCall call) {
         JSObject ret = new JSObject();
         ret.put("version", pluginVersion);

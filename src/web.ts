@@ -269,6 +269,56 @@ export class CapgoCapacitorFastSqlWeb extends WebPlugin implements CapgoCapacito
     });
   }
 
+  async deleteDatabase(options: { database: string }): Promise<void> {
+    // If the database is currently open, close it first
+    const dbInfo = this.databases.get(options.database);
+    if (dbInfo) {
+      dbInfo.db.close();
+      this.databases.delete(options.database);
+    }
+
+    // Remove the database from IndexedDB
+    await this.deleteFromIndexedDB(options.database);
+  }
+
+  /**
+   * Delete database from IndexedDB
+   *
+   * @param dbName - Database name to delete
+   * @returns Promise that resolves when the database entry has been removed
+   */
+  private async deleteFromIndexedDB(dbName: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('CapacitorNativeSQL', 1);
+
+      request.onerror = () => reject(request.error);
+
+      request.onupgradeneeded = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
+        if (!db.objectStoreNames.contains('databases')) {
+          db.createObjectStore('databases');
+        }
+      };
+
+      request.onsuccess = () => {
+        const db = request.result;
+        const transaction = db.transaction(['databases'], 'readwrite');
+        const store = transaction.objectStore('databases');
+        const deleteRequest = store.delete(dbName);
+
+        deleteRequest.onsuccess = () => {
+          db.close();
+          resolve();
+        };
+
+        deleteRequest.onerror = () => {
+          db.close();
+          reject(deleteRequest.error);
+        };
+      };
+    });
+  }
+
   async getPluginVersion(): Promise<{ version: string }> {
     return { version: 'web' };
   }
