@@ -83,6 +83,23 @@ export class FastSQL {
   }
 
   /**
+   * Delete a database and all its data permanently.
+   *
+   * If the database is currently connected, it will be disconnected first.
+   *
+   * @param database - Database name to delete
+   */
+  static async deleteDatabase(database: string): Promise<void> {
+    // Disconnect if currently connected
+    if (this.connections.has(database)) {
+      await this.disconnect(database);
+    }
+
+    // Delete via native plugin
+    await CapgoCapacitorFastSql.deleteDatabase({ database });
+  }
+
+  /**
    * Get list of all open database connections
    *
    * @returns Array of database names

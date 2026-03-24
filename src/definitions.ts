@@ -266,4 +266,21 @@ export interface CapgoCapacitorFastSqlPlugin {
    * ```
    */
   configureWeb(config: WebConfig): Promise<void>;
+
+  /**
+   * Delete a database and all its data permanently.
+   *
+   * If the database is currently connected, it will be disconnected first.
+   * The database file (on iOS/Android) or IndexedDB entry (on web) will be removed.
+   *
+   * @param options - Database name to delete
+   * @returns Promise that resolves when the database has been deleted
+   * @throws Error if the database cannot be deleted
+   * @since 0.0.1
+   * @example
+   * ```typescript
+   * await CapgoCapacitorFastSql.deleteDatabase({ database: 'myapp' });
+   * ```
+   */
+  deleteDatabase(options: { database: string }): Promise<void>;
 }
